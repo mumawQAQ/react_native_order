@@ -2,7 +2,7 @@ import {Image, Pressable, StyleSheet} from "react-native";
 import Colors from "@/src/constants/Colors";
 import {Text} from "@/src/components/Themed";
 import {Product} from "@/src/types";
-import {Link} from "expo-router";
+import {Link, useSegments} from "expo-router";
 
 type ProductListItemProps = {
     product: Product;
@@ -10,8 +10,9 @@ type ProductListItemProps = {
 
 const defaultImg = "'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png";
 const ProductListItem = ({product}: ProductListItemProps) => {
+    const segments = useSegments();
     return (
-        <Link href={`/menu/${product.id}`} asChild>
+        <Link href={`/${segments[0]}/menu/${product.id}`} asChild>
             <Pressable style={styles.container}>
                 <Image
                     source={{uri: product.image || defaultImg}}
