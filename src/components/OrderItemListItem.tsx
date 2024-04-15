@@ -1,8 +1,9 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import Colors from '../constants/Colors';
 import {OrderItem, Product} from '../types';
 import {defaultPizzaImg} from './ProductListItem';
+import RemoteImage from "@/src/components/RemoteImage";
 
 type OrderItemListItemProps = {
     item: { products: Product | null } & OrderItem;
@@ -11,11 +12,10 @@ type OrderItemListItemProps = {
 const OrderItemListItem = ({item}: OrderItemListItemProps) => {
     return (
         <View style={styles.container}>
-            <Image
-                source={{uri: item.products && item.products.image ? item.products.image : defaultPizzaImg}}
-                style={styles.image}
-                resizeMode="contain"
-            />
+            <RemoteImage path={item.products && item.products.image ? item.products.image : ''}
+                         fallback={defaultPizzaImg}
+                         style={styles.image}
+                         resizeMode="contain"/>
             <View style={{flex: 1}}>
                 <Text style={styles.title}>{item.products ? item.products.name : "Product Not Exist"}</Text>
                 <View style={styles.subtitleContainer}>

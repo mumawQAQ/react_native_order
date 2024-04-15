@@ -1,4 +1,4 @@
-import {ActivityIndicator, Image, Pressable, StyleSheet, Text, View} from "react-native";
+import {ActivityIndicator, Pressable, StyleSheet, Text, View} from "react-native";
 import {Link, Stack, useLocalSearchParams, useRouter} from "expo-router";
 import React, {useState} from "react";
 import {useCart} from "@/src/providers/CartProvider";
@@ -7,6 +7,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Colors from "@/src/constants/Colors";
 import {useProduct} from "@/src/api/products";
 import {defaultPizzaImg} from "@/src/components/ProductListItem";
+import RemoteImage from "@/src/components/RemoteImage";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 const ProductDetailScreen = () => {
@@ -51,9 +52,11 @@ const ProductDetailScreen = () => {
                         </Pressable>
                     </Link>)
             }}/>
-            <Image source={{uri: product.image || defaultPizzaImg}} style={styles.image} resizeMode='contain'/>
-            <Text style={styles.title}>{product.name}</Text>
-            <Text style={styles.price}>${product.price}</Text>
+            <RemoteImage path={product && product.image ? product.image : ''} fallback={defaultPizzaImg}
+                         style={styles.image}
+                         resizeMode='contain'/>
+            <Text style={styles.title}>{product ? product.name : "Product not exist"}</Text>
+            <Text style={styles.price}>${product ? product.price : 0}</Text>
         </View>
     );
 };
