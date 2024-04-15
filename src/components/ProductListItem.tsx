@@ -12,6 +12,7 @@ export const defaultPizzaImg = "https://notjustdev-dummy.s3.us-east-2.amazonaws.
 const ProductListItem = ({product}: ProductListItemProps) => {
     const segments = useSegments();
     return (
+        // @ts-ignore
         <Link href={`/${segments[0]}/menu/${product.id}`} asChild>
             <Pressable style={styles.container}>
                 <Image

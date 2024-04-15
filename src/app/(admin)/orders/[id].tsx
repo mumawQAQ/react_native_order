@@ -1,25 +1,29 @@
-import {FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
 import {Stack, useLocalSearchParams} from 'expo-router';
-import orders from '../../../../assets/data/orders';
 import OrderItemListItem from '../../../components/OrderItemListItem';
 import OrderListItem from '../../../components/OrderListItem';
 import {OrderStatusList} from "@/src/types";
 import Colors from "@/src/constants/Colors";
+import {useOrderDetails, useUpdateOrder} from "@/src/api/orders";
 
 const OrderDetailScreen = () => {
-    const {id} = useLocalSearchParams();
-
-    const order = orders.find((o) => o.id.toString() === id);
+    const {id: idString} = useLocalSearchParams();
+    const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
+    const {data: order, error, isLoading} = useOrderDetails(id);
+    const {mutate: updateOrder} = useUpdateOrder();
+    const updateStatus = (status: string) => {
+        updateOrder({id, updatedField: {status}});
+    }
 
     if (!order) {
         return <Text>Order not found!</Text>;
     }
+    if (isLoading) return <ActivityIndicator/>;
+    if (error) return <Text>Error: {error.message}</Text>;
 
     return (
         <View style={styles.container}>
             <Stack.Screen options={{title: `Order #${order.id}`}}/>
-
-            <OrderListItem order={order}/>
 
             <FlatList
                 data={order.order_items}
@@ -32,7 +36,7 @@ const OrderDetailScreen = () => {
                             {OrderStatusList.map((status) => (
                                 <Pressable
                                     key={status}
-                                    onPress={() => console.warn('Update status')}
+                                    onPress={() => updateStatus(status)}
                                     style={{
                                         borderColor: Colors.light.tint,
                                         borderWidth: 1,

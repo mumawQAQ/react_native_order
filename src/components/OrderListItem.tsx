@@ -15,6 +15,7 @@ const OrderListItem = ({order}: OrderListItemProps) => {
     const segments = useSegments();
 
     return (
+        // @ts-ignore
         <Link href={`/${segments[0]}/orders/${order.id}`} asChild>
             <Pressable style={styles.container}>
                 <View>
