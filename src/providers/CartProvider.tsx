@@ -2,6 +2,7 @@ import {createContext, PropsWithChildren, useContext, useState} from "react";
 import {CartItem, PizzaSize, Product} from "@/src/types";
 import {randomUUID} from "expo-crypto"
 
+
 type CartType = {
     items: CartItem[],
     addItem: (product: Product, size: PizzaSize) => void,

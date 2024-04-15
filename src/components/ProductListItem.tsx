@@ -1,8 +1,8 @@
 import {Image, Pressable, StyleSheet} from "react-native";
 import Colors from "@/src/constants/Colors";
 import {Text} from "@/src/components/Themed";
-import {Product} from "@/src/types";
 import {Link, useSegments} from "expo-router";
+import {Product} from "@/src/types";
 
 type ProductListItemProps = {
     product: Product;
