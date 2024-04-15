@@ -4,6 +4,7 @@ import Colors from '../constants/Colors';
 import {CartItem} from '../types';
 import {FontAwesome} from '@expo/vector-icons';
 import {useCart} from '../providers/CartProvider';
+import {defaultPizzaImg} from "@/src/components/ProductListItem";
 
 type CartListItemProps = {
     cartItem: CartItem;
@@ -14,7 +15,7 @@ const CartListItem = ({cartItem}: CartListItemProps) => {
     return (
         <View style={styles.container}>
             <Image
-                source={{uri: cartItem.product.image || ""}}
+                source={{uri: cartItem.product.image || defaultPizzaImg}}
                 style={styles.image}
                 resizeMode="contain"
             />

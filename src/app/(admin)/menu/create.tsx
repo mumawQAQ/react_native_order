@@ -1,10 +1,11 @@
 import {Alert, Image, StyleSheet, Text, TextInput, View} from "react-native";
-import {Stack, useLocalSearchParams} from "expo-router";
+import {Stack, useLocalSearchParams, useRouter} from "expo-router";
 import Button from '@/src/components/Button';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {defaultPizzaImg} from "@/src/components/ProductListItem";
 import Colors from "@/src/constants/Colors";
 import * as ImagePicker from 'expo-image-picker';
+import {useDeleteProduct, useInsertProduct, useProduct, useUpdateProduct} from "@/src/api/products";
 
 
 const CreateProductScreen = () => {
@@ -13,9 +14,24 @@ const CreateProductScreen = () => {
     const [errors, setErrors] = useState('');
     const [image, setImage] = useState<string | null>(null);
 
-    const {id} = useLocalSearchParams()
-
+    const {id: idString} = useLocalSearchParams()
+    const id = parseFloat(typeof idString === 'string' ? idString : idString[0])
     const isUpdating = !!id;
+
+    const {mutate: insertProduct} = useInsertProduct();
+    const {mutate: updateProduct} = useUpdateProduct();
+    const {mutate: deleteProduct} = useDeleteProduct();
+    const {data: updatingProduct} = useProduct(id);
+
+    const router = useRouter()
+
+    useEffect(() => {
+        if (updatingProduct) {
+            setName(updatingProduct.name);
+            setPrice(updatingProduct.price.toString());
+            setImage(updatingProduct.image);
+        }
+    }, [updatingProduct]);
 
 
     const pickImage = async () => {
@@ -53,7 +69,12 @@ const CreateProductScreen = () => {
     }
 
     const onDelete = () => {
-
+        deleteProduct(id, {
+            onSuccess: () => {
+                resetFields()
+                router.replace('/(admin)')
+            }
+        })
     }
     const confirmDelete = () => {
         Alert.alert('Confirm', 'Are you sure you want to delete this product?', [
@@ -81,8 +102,17 @@ const CreateProductScreen = () => {
         if (!validateInput()) {
             return;
         }
-
-        resetFields()
+        updateProduct({
+            id,
+            name,
+            price: parseFloat(price),
+            image,
+        }, {
+            onSuccess: () => {
+                resetFields()
+                router.back()
+            }
+        })
     }
 
     const onCreate = () => {
@@ -90,7 +120,16 @@ const CreateProductScreen = () => {
             return;
         }
 
-        resetFields()
+        insertProduct({
+            name,
+            price: parseFloat(price),
+            image
+        }, {
+            onSuccess: () => {
+                resetFields()
+                router.back()
+            }
+        })
     }
     return (
         <View style={styles.container}>
