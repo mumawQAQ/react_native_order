@@ -4,6 +4,7 @@ import {randomUUID} from "expo-crypto"
 import {useInsertOrder} from "@/src/api/orders";
 import {useRouter} from "expo-router";
 import {useInsertOrderItems} from "@/src/api/order-items";
+import {initializePaymentSheet, openPaymentSheet} from "@/src/lib/stripe";
 
 
 type CartType = {
@@ -72,7 +73,12 @@ const CartProvider = ({children}: PropsWithChildren) => {
     const clearCart = () => {
         setItems([])
     }
-    const checkout = () => {
+    const checkout = async () => {
+        await initializePaymentSheet(Math.floor(total * 100))
+        const payed = await openPaymentSheet()
+        if (!payed) {
+            return
+        }
         insertOrder({total}, {
             onSuccess: saveOrderItems
         })
