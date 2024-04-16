@@ -2,6 +2,8 @@ import {Platform} from "react-native";
 import * as Notifications from "expo-notifications";
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
+import {supabase} from "@/src/lib/supabase";
+import {Order} from "@/src/types";
 
 function handleRegistrationError(errorMessage: string) {
     alert(errorMessage);
@@ -70,4 +72,14 @@ export async function sendPushNotification(expoPushToken: string) {
         },
         body: JSON.stringify(message),
     });
+}
+
+export const getUserToken = async (userId: string) => {
+    const {data, error} = await supabase.from('profiles').select('*').eq('id', userId).single();
+    return data?.expo_push_token;
+}
+
+export const notifyUserAboutOrderUpdate = async (order: Order) => {
+    const token = await getUserToken(order.user_id);
+    sendPushNotification(token!)
 }
